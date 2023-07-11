@@ -2,21 +2,17 @@ import { v4 as uuidv4 } from "uuid";
 import express, { Application, Request, Response } from "express";
 import bodyParser from "body-parser";
 import { config } from "dotenv";
-import { IUser } from "./src/type";
-import fs from "fs";
+import { IUser } from "./types";
+
+import { readData, writeData } from "./ultils";
 config();
 let response: {
   users?: IUser[];
 } = {};
 const port = process.env.PORT || 9999;
 const name = process.env.MYNAME || "Kun";
-fs.readFile("src/db.json", (error, data) => {
-  if (error) {
-    console.error(error);
-    throw error;
-  }
-  response = JSON.parse(data.toString());
-});
+readData(response);
+
 const app: Application = express();
 var jsonParser = bodyParser.json();
 
@@ -26,7 +22,7 @@ app.get("/", (req: Request, res: Response) => {
 app.get("/users", (req: Request, res: Response) => {
   const { users } = response;
   if (users) {
-    res.status(200).json(users);
+    res.json(users);
   } else {
     res.status(404).json("Sorry, cant find that");
   }
@@ -36,7 +32,7 @@ app.get("/users/:id", (req: Request, res: Response) => {
   const { users } = response;
   const user = users?.find((user) => user.id === req.params.id);
   if (user) {
-    res.status(200).json(user);
+    res.json(user);
   } else {
     res.status(404).json("Sorry, cant find user");
   }
@@ -50,17 +46,7 @@ app.post("/users", jsonParser, (req: Request, res: Response) => {
   const { users } = response;
   users?.push(user);
   const newData = JSON.stringify({ ...response, users });
-  fs.writeFile("src/db.json", newData, "utf8", (err) => {
-    if (err) {
-      console.log(`Error writing file: ${err}`);
-      res.status(400).json({
-        message: err.message,
-      });
-    } else {
-      res.status(200).json(user);
-      console.log(`File is written successfully!`);
-    }
-  });
+  writeData(newData, res, user);
 });
 
 app.delete("/users/:id", (req: Request, res: Response) => {
@@ -69,17 +55,7 @@ app.delete("/users/:id", (req: Request, res: Response) => {
   if (deleteUser) {
     users = users?.filter((user) => user.id !== req.params.id);
     const newData = JSON.stringify({ ...response, users });
-    fs.writeFile("src/db.json", newData, "utf8", (err) => {
-      if (err) {
-        console.log(`Error writing file: ${err}`);
-        res.status(500).json({
-          message: err.message,
-        });
-      } else {
-        console.log(`File is written successfully!`);
-        res.status(200).json(deleteUser);
-      }
-    });
+    writeData(newData, res, deleteUser);
   } else {
     res.status(400).json({
       message: "User not found",
@@ -100,17 +76,7 @@ app.put("/users/:id", jsonParser, (req: Request, res: Response) => {
       }
     });
     const newData = JSON.stringify({ ...response, newUsers });
-    fs.writeFile("src/db.json", newData, "utf8", (err) => {
-      if (err) {
-        console.log(`Error writing file: ${err}`);
-        res.status(500).json({
-          message: err.message,
-        });
-      } else {
-        console.log(`File is written successfully!`);
-        res.status(200).json(editUser);
-      }
-    });
+    writeData(newData, res, editUser);
   } else {
     res.status(400).json({
       message: "User not found",
