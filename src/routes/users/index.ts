@@ -1,9 +1,8 @@
+import { IUser } from "@/type";
+import { readData, writeData } from "@/utils";
 import express, { Request, Response } from "express";
-import { IUser } from "@/types";
-
 import { v4 as uuidv4 } from "uuid";
 import bodyParser from "body-parser";
-import { readData, writeData } from "@/ultil";
 
 const jsonParser = bodyParser.json();
 
@@ -14,11 +13,13 @@ let response: {
 } = {};
 
 const name = process.env.MYNAME || "Kun";
-readData(response);
-router.get("/", (req: Request, res: Response) => {
+
+response = readData();
+
+router.get("/", (_req: Request, res: Response) => {
   res.send("Hello " + name);
 });
-router.get("/users", (req: Request, res: Response) => {
+router.get("/users", (_req: Request, res: Response) => {
   const { users } = response;
   if (users) {
     res.json(users);
@@ -37,7 +38,7 @@ router.get("/users/:id", (req: Request, res: Response) => {
   }
 });
 
-router.post("/users", jsonParser, (req: Request, res: Response) => {
+router.post("/users", jsonParser, async (req: Request, res: Response) => {
   let user = {
     id: uuidv4().slice(0, 8),
     name: req.body.name,
@@ -45,16 +46,30 @@ router.post("/users", jsonParser, (req: Request, res: Response) => {
   const { users } = response;
   users?.push(user);
   const newData = JSON.stringify({ ...response, users });
-  writeData(newData, res, user);
+  const err = await writeData(newData);
+  if (err) {
+    res.status(500).json({
+      message: err,
+    });
+  } else {
+    res.json(user);
+  }
 });
 
-router.delete("/users/:id", (req: Request, res: Response) => {
+router.delete("/users/:id", async (req: Request, res: Response) => {
   let { users } = response;
   const deleteUser = users?.find((user) => user.id === req.params.id);
   if (deleteUser) {
     users = users?.filter((user) => user.id !== req.params.id);
     const newData = JSON.stringify({ ...response, users });
-    writeData(newData, res, deleteUser);
+    const err = await writeData(newData);
+    if (err) {
+      res.status(500).json({
+        message: err,
+      });
+    } else {
+      res.json(deleteUser);
+    }
   } else {
     res.status(400).json({
       message: "User not found",
@@ -62,7 +77,7 @@ router.delete("/users/:id", (req: Request, res: Response) => {
   }
 });
 
-router.put("/users/:id", jsonParser, (req: Request, res: Response) => {
+router.put("/users/:id", jsonParser, async (req: Request, res: Response) => {
   const { users } = response;
   let editUser = users?.find((user) => user.id === req.params.id);
   if (editUser) {
@@ -75,11 +90,19 @@ router.put("/users/:id", jsonParser, (req: Request, res: Response) => {
       }
     });
     const newData = JSON.stringify({ ...response, newUsers });
-    writeData(newData, res, editUser);
+    const err = await writeData(newData);
+    if (err) {
+      res.status(500).json({
+        message: err,
+      });
+    } else {
+      res.json(editUser);
+    }
   } else {
     res.status(400).json({
       message: "User not found",
     });
   }
 });
-module.exports = router;
+
+export default router;

@@ -1,26 +1,23 @@
 import fs from "fs";
-import { Response } from "express";
 
-export const readData = (res: any) => {
+export const readData = (): any => {
   fs.readFile("db.json", (error, data) => {
     if (error) {
       console.error(error);
       throw error;
     }
-    res = JSON.parse(data.toString());
+    return JSON.parse(data.toString());
   });
 };
 
-export const writeData = (data: string, res: Response, obj: any) => {
+export const writeData = (data: string): any => {
   fs.writeFile("db.json", data, "utf8", (err) => {
     if (err) {
       console.log(`Error writing file: ${err}`);
-      res.status(500).json({
-        message: err.message,
-      });
+      return err;
     } else {
       console.log(`File is written successfully!`);
-      res.json(obj);
+      return false;
     }
   });
 };
