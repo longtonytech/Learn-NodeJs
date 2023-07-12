@@ -7,19 +7,13 @@ import bodyParser from "body-parser";
 const jsonParser = bodyParser.json();
 
 const router = express.Router();
-// individual products routes
+
 let response: {
   users?: IUser[];
 } = {};
 
-const name = process.env.MYNAME || "Kun";
-
 response = readData();
-
 router.get("/", (_req: Request, res: Response) => {
-  res.send("Hello " + name);
-});
-router.get("/users", (_req: Request, res: Response) => {
   const { users } = response;
   if (users) {
     res.json(users);
@@ -28,7 +22,7 @@ router.get("/users", (_req: Request, res: Response) => {
   }
 });
 
-router.get("/users/:id", (req: Request, res: Response) => {
+router.get("/:id", (req: Request, res: Response) => {
   const { users } = response;
   const user = users?.find((user) => user.id === req.params.id);
   if (user) {
@@ -38,7 +32,7 @@ router.get("/users/:id", (req: Request, res: Response) => {
   }
 });
 
-router.post("/users", jsonParser, async (req: Request, res: Response) => {
+router.post("/", jsonParser, async (req: Request, res: Response) => {
   let user = {
     id: uuidv4().slice(0, 8),
     name: req.body.name,
@@ -56,7 +50,7 @@ router.post("/users", jsonParser, async (req: Request, res: Response) => {
   }
 });
 
-router.delete("/users/:id", async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   let { users } = response;
   const deleteUser = users?.find((user) => user.id === req.params.id);
   if (deleteUser) {
@@ -77,7 +71,7 @@ router.delete("/users/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/users/:id", jsonParser, async (req: Request, res: Response) => {
+router.put("/:id", jsonParser, (req: Request, res: Response) => {
   const { users } = response;
   let editUser = users?.find((user) => user.id === req.params.id);
   if (editUser) {
@@ -89,8 +83,9 @@ router.put("/users/:id", jsonParser, async (req: Request, res: Response) => {
         return user;
       }
     });
-    const newData = JSON.stringify({ ...response, newUsers });
-    const err = await writeData(newData);
+
+    const newData = JSON.stringify({ ...response, users: newUsers });
+    const err = writeData(newData);
     if (err) {
       res.status(500).json({
         message: err,
