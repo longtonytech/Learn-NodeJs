@@ -1,4 +1,4 @@
-import { IUser } from "@/type";
+import { IData, IUser } from "@/types";
 import { readData, writeData } from "@/utils";
 import express, { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
@@ -7,10 +7,15 @@ import bodyParser from "body-parser";
 const jsonParser = bodyParser.json();
 
 const router = express.Router();
-
-let response: {
-  users?: IUser[];
-} = {};
+const createdUser = (req: Request, id?: string): IUser => ({
+  id: id || uuidv4().slice(0, 8),
+  name: req.body.name,
+  email: req.body.email,
+  phone: req.body.phone,
+  createdAt: req.body.createdAt,
+  updatedAt: req.body.updatedAt,
+});
+let response: IData = {};
 
 response = readData();
 router.get("/", (_req: Request, res: Response) => {
@@ -18,7 +23,7 @@ router.get("/", (_req: Request, res: Response) => {
   if (users) {
     res.json(users);
   } else {
-    res.status(404).json("Sorry, cant find that");
+    res.status(404).json("Sorry, cant find Users");
   }
 });
 
@@ -28,15 +33,13 @@ router.get("/:id", (req: Request, res: Response) => {
   if (user) {
     res.json(user);
   } else {
-    res.status(404).json("Sorry, cant find user");
+    res.status(404).json("Sorry, cant find User");
   }
 });
 
 router.post("/", jsonParser, async (req: Request, res: Response) => {
-  let user = {
-    id: uuidv4().slice(0, 8),
-    name: req.body.name,
-  };
+  const user = createdUser(req);
+  res.json(user);
   const { users } = response;
   users?.push(user);
   const newData = JSON.stringify({ ...response, users });
@@ -77,7 +80,7 @@ router.put("/:id", jsonParser, (req: Request, res: Response) => {
   if (editUser) {
     const newUsers = users?.map((user) => {
       if (user.id === req.params.id) {
-        editUser = { id: req.params.id, ...req.body };
+        editUser = createdUser(req, req.params.id);
         return editUser;
       } else {
         return user;
