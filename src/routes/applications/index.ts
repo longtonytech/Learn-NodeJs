@@ -2,16 +2,13 @@ import { IApplication, IData } from "@/types";
 import { readData, writeData } from "@/utils";
 import express, { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import bodyParser from "body-parser";
-
-const jsonParser = bodyParser.json();
 
 const router = express.Router();
-const createdAplication = (req: Request, id?: string): IApplication => ({
+const createdAplication = (body: any, id?: string): IApplication => ({
   id: id || uuidv4().slice(0, 8),
-  userId: req.body.userId,
-  name: req.body.name,
-  deviceId: req.body.deviceId,
+  userId: body.userId,
+  name: body.name,
+  deviceId: body.deviceId,
 });
 let response: IData = {};
 
@@ -37,8 +34,8 @@ router.get("/:id", (req: Request, res: Response) => {
   }
 });
 
-router.post("/", jsonParser, async (req: Request, res: Response) => {
-  const application = createdAplication(req);
+router.post("/", async (req: Request, res: Response) => {
+  const application = createdAplication(req.body);
   const { applications } = response;
   applications?.push(application);
   const newData = JSON.stringify({ ...response, applications });
@@ -77,7 +74,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", jsonParser, (req: Request, res: Response) => {
+router.put("/:id", (req: Request, res: Response) => {
   const { applications } = response;
   let editApplication = applications?.find(
     (application) => application.id === req.params.id
@@ -85,7 +82,7 @@ router.put("/:id", jsonParser, (req: Request, res: Response) => {
   if (editApplication) {
     const newApplications = applications?.map((application) => {
       if (application.id === req.params.id) {
-        editApplication = createdAplication(req, req.params.id);
+        editApplication = createdAplication(req.body, req.params.id);
         return editApplication;
       } else {
         return application;

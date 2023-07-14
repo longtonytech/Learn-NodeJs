@@ -2,20 +2,17 @@ import { IApplicationWallet, IData } from "@/types";
 import { readData, writeData } from "@/utils";
 import express, { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import bodyParser from "body-parser";
-
-const jsonParser = bodyParser.json();
 
 const router = express.Router();
 const createdAplicationWallet = (
-  req: Request,
+  body: any,
   id?: string
 ): IApplicationWallet => ({
   id: id || uuidv4().slice(0, 8),
-  userId: req.body.userId,
-  walletId: req.body.walletId,
-  applicationId: req.body.applicationId,
-  createdAt: req.body.createdAt,
+  userId: body.userId,
+  walletId: body.walletId,
+  applicationId: body.applicationId,
+  createdAt: body.createdAt,
 });
 let response: IData = {};
 
@@ -41,8 +38,8 @@ router.get("/:id", (req: Request, res: Response) => {
   }
 });
 
-router.post("/", jsonParser, async (req: Request, res: Response) => {
-  const applicationWallet = createdAplicationWallet(req);
+router.post("/", async (req: Request, res: Response) => {
+  const applicationWallet = createdAplicationWallet(req.body);
   const { applicationWallets } = response;
   applicationWallets?.push(applicationWallet);
   const newData = JSON.stringify({ ...response, applicationWallets });
@@ -81,7 +78,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", jsonParser, (req: Request, res: Response) => {
+router.put("/:id", (req: Request, res: Response) => {
   const { applicationWallets } = response;
   let editApplicationWallet = applicationWallets?.find(
     (applicationWallet) => applicationWallet.id === req.params.id
@@ -90,7 +87,10 @@ router.put("/:id", jsonParser, (req: Request, res: Response) => {
     const newApplicationWallets = applicationWallets?.map(
       (applicationWallet) => {
         if (applicationWallet.id === req.params.id) {
-          editApplicationWallet = createdAplicationWallet(req, req.params.id);
+          editApplicationWallet = createdAplicationWallet(
+            req.body,
+            req.params.id
+          );
           return editApplicationWallet;
         } else {
           return applicationWallet;

@@ -2,17 +2,14 @@ import { IData, IWallet } from "@/types";
 import { readData, writeData } from "@/utils";
 import express, { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import bodyParser from "body-parser";
-
-const jsonParser = bodyParser.json();
 
 const router = express.Router();
-const createdWallet = (req: Request, id?: string): IWallet => ({
+const createdWallet = (body: any, id?: string): IWallet => ({
   id: id || uuidv4().slice(0, 8),
-  userId: req.body.userId,
-  walletAddress: req.body.walletAddress,
-  amountOfMoney: req.body.amountOfMoney,
-  privateKey: req.body.privateKey,
+  userId: body.userId,
+  walletAddress: body.walletAddress,
+  amountOfMoney: body.amountOfMoney,
+  privateKey: body.privateKey,
 });
 let response: IData = {};
 
@@ -36,8 +33,8 @@ router.get("/:id", (req: Request, res: Response) => {
   }
 });
 
-router.post("/", jsonParser, async (req: Request, res: Response) => {
-  const wallet = createdWallet(req);
+router.post("/", async (req: Request, res: Response) => {
+  const wallet = createdWallet(req.body);
   const { wallets } = response;
   wallets?.push(wallet);
   const newData = JSON.stringify({ ...response, wallets });
@@ -72,13 +69,13 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", jsonParser, (req: Request, res: Response) => {
+router.put("/:id", (req: Request, res: Response) => {
   const { wallets } = response;
   let editWallet = wallets?.find((wallet) => wallet.id === req.params.id);
   if (editWallet) {
     const newWallets = wallets?.map((wallet) => {
       if (wallet.id === req.params.id) {
-        editWallet = createdWallet(req, req.params.id);
+        editWallet = createdWallet(req.body, req.params.id);
         return editWallet;
       } else {
         return wallet;
