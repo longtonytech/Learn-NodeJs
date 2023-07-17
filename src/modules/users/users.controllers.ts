@@ -1,16 +1,8 @@
 import UsersServices from "@/modules/users/users.services";
-import { IUser } from "@/types";
 import { Request, Response } from "express";
-import { v4 as uuidv4 } from "uuid";
+import { checkEmty, createdUser } from "./users.utils";
+import { requiredUsersFields } from "./users.model";
 
-const createdUser = (body: any, id?: string): IUser => ({
-  id: id || uuidv4().slice(0, 8),
-  name: body.name,
-  email: body.email,
-  phone: body.phone,
-  createdAt: body.createdAt,
-  updatedAt: body.updatedAt,
-});
 const getUsers = (_req: Request, res: Response) => {
   const users = UsersServices.getUsers();
   if (users) {
@@ -27,15 +19,27 @@ const getUser = (req: Request, res: Response) => {
     res.status(404).json("Sorry, cant find User");
   }
 };
+
 const createUser = async (req: Request, res: Response) => {
   const user = createdUser(req.body);
-  const err = UsersServices.createdUser(user);
-  if (err) {
-    res.status(500).json({
-      message: err,
-    });
+  const errors = checkEmty(requiredUsersFields, user);
+  if (Object.keys(errors).length === 0) {
+    const response = await UsersServices.createdUser(user);
+    if (response.error) {
+      if (response.user) {
+        res.status(500).json({
+          message: response.error,
+        });
+      } else {
+        res.status(400).json({
+          message: response.error,
+        });
+      }
+    } else {
+      res.json(response.user);
+    }
   } else {
-    res.json(user);
+    res.status(400).json(errors);
   }
 };
 
@@ -51,25 +55,30 @@ const deleteUser = async (req: Request, res: Response) => {
     }
   } else {
     res.status(400).json({
-      message: "User not found",
+      message: response.error,
     });
   }
 };
 const editUser = async (req: Request, res: Response) => {
   const user = createdUser(req.body, req.params.id);
-  const response = await UsersServices.editUser(req.params.id, user);
-  if (response.user) {
-    if (response.error) {
-      res.status(500).json({
+  const errors = checkEmty(requiredUsersFields, user);
+  if (Object.keys(errors).length === 0) {
+    const response = await UsersServices.editUser(req.params.id, user);
+    if (response.user) {
+      if (response.error) {
+        res.status(500).json({
+          message: response.error,
+        });
+      } else {
+        res.json(response.user);
+      }
+    } else {
+      res.status(400).json({
         message: response.error,
       });
-    } else {
-      res.json(response.user);
     }
   } else {
-    res.status(400).json({
-      message: "User not found",
-    });
+    res.status(400).json(errors);
   }
 };
 

@@ -32,3 +32,7 @@ export type IData = {
   applications?: IApplication[];
   applicationWallets?: IApplicationWallet[];
 };
+export type IResponse = {
+  user?: IUser;
+  error?: unknown | boolean;
+};

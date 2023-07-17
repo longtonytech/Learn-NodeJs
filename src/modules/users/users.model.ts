@@ -18,3 +18,4 @@ export const UserModel = {
     type: "string",
   },
 };
+export const requiredUsersFields: string[] = ["email", "name"];
