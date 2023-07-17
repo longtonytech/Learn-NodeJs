@@ -34,5 +34,8 @@ export type IData = {
 };
 export type IResponse = {
   user?: IUser;
+  wallet?: IWallet;
+  application?: IApplication;
+
   error?: unknown | boolean;
 };
