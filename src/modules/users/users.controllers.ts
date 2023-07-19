@@ -1,18 +1,17 @@
 import { Request, Response } from "express";
 import UsersServices from "@/modules/users/users.services";
-import { checkEmty, formatCreateUser } from "./users.utils";
-import { requiredUsersFields } from "./users.models";
+import { formatCreateUser } from "./users.utils";
 
-const getUsers = (_req: Request, res: Response) => {
-  const users = UsersServices.getUsers();
+const getUsers = async (_req: Request, res: Response) => {
+  const users = await UsersServices.getUsers();
   if (users) {
     res.json(users);
   } else {
     res.status(404).json("Sorry, cant find Users");
   }
 };
-const getUser = (req: Request, res: Response) => {
-  const user = UsersServices.getUserById(req.params.id);
+const getUser = async (req: Request, res: Response) => {
+  const user = await UsersServices.getUserById(req.params.id);
   if (user) {
     res.json(user);
   } else {
@@ -22,74 +21,65 @@ const getUser = (req: Request, res: Response) => {
 
 const createUser = async (req: Request, res: Response) => {
   const user = formatCreateUser(req.body);
-  const errors = checkEmty(requiredUsersFields, user);
-  if (Object.keys(errors).length !== 0) {
-    res.status(400).json(errors);
-    return;
-  }
-  const checkedUser = UsersServices.getUserByEmail(user.email);
+  const checkedUser = await UsersServices.getUserByEmail(user.email);
   if (checkedUser) {
     res.status(400).json({
       message: "Email has existed",
     });
     return;
   }
-  const response = await UsersServices.createUser(user);
-  if (response.error) {
+  const resUser = await UsersServices.createUser(user);
+  if (!resUser) {
     res.status(400).json({
-      message: response.error,
+      message: "Something wrong",
     });
   } else {
-    res.json(response.user);
+    res.json(resUser);
   }
 };
 
 const deleteUser = async (req: Request, res: Response) => {
-  const deleteUser = UsersServices.getUserById(req.params.id);
+  const deleteUser = await UsersServices.getUserById(req.params.id);
   if (!deleteUser) {
     res.status(400).json({
       message: "User not found",
     });
     return;
   }
-  const response = await UsersServices.deleteUser(req.params.id);
-  if (response.error) {
+  const resUser = await UsersServices.deleteUser(req.params.id);
+  if (!resUser) {
     res.status(500).json({
-      message: response.error,
+      message: "Something wrong",
     });
   } else {
-    res.json(deleteUser);
+    res.json(resUser);
   }
 };
 
 const editUser = async (req: Request, res: Response) => {
-  const errors = checkEmty(requiredUsersFields, req.body);
-  if (Object.keys(errors).length !== 0) {
-    res.status(400).json(errors);
-    return;
-  }
-  let editUser = UsersServices.getUserById(req.params.id);
+  let editUser = await UsersServices.getUserById(req.params.id);
   if (!editUser) {
     res.status(400).json({
       message: "User not found",
     });
     return;
   }
-  const checkedUser = UsersServices.getUserByEmail(req.body.email);
+  const checkedUser = await UsersServices.getUserByEmail(req.body.email);
+
   if (checkedUser) {
     res.status(400).json({
       message: "Email has existed",
     });
     return;
   }
-  const response = await UsersServices.editUser(req.params.id, req.body);
+  const resUser = await UsersServices.editUser(req.params.id, req.body);
 
-  if (response.error) {
+  if (!resUser) {
     res.status(500).json({
-      message: response.error,
+      message: "Something wrong",
     });
   } else {
-    res.json(response.user);
+    res.json(resUser);
   }
 };
 

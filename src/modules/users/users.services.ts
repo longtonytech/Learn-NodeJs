@@ -1,74 +1,62 @@
-import { IData, IResponse, IUser } from "@/types";
-import { readData, writeData } from "@/utils";
+import { IUser } from "@/types";
 import { formatEditUser } from "./users.utils";
-let data: IData;
+import { UserModel } from "./users.models";
 
-const getUsers = () => {
-  data = readData();
-  const { users } = data;
-  return users;
+const getUsers = async () => {
+  let users: IUser[] = [];
+  try {
+    users = await UserModel.find({});
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
 };
-const getUserById = (id: string) => {
-  data = readData();
-  const { users } = data;
-  const user = users?.find((user) => user.id === id);
-  return user;
+const getUserById = async (id: string) => {
+  try {
+    const user = await UserModel.findById(id);
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
 };
-const getUserByEmail = (email?: string) => {
-  data = readData();
-  const { users } = data;
-  const user = users?.find((user) => user.email === email);
-  return user;
+const getUserByEmail = async (email?: string) => {
+  try {
+    const [user] = await UserModel.find({ email: email }).exec();
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const createUser = async (user: IUser) => {
-  data = readData();
-  let res: IResponse = {};
-  const { users } = data;
-  users?.push(user);
-  const newData = JSON.stringify({ ...data, users });
-  const err = await writeData(newData);
-  res = {
-    user: user,
-    error: err,
-  };
-  return res;
+  const userModel = new UserModel(user);
+  try {
+    const newUser = await userModel.save();
+    return newUser;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const deleteUser = async (id: string) => {
-  data = readData();
-  let { users } = data;
-  let res: IResponse = {};
-  users = users?.filter((user) => user.id !== id);
-  const newData = JSON.stringify({ ...data, users });
-  const err = await writeData(newData);
-  res = {
-    error: err,
-  };
-  return res;
+  try {
+    const user = await UserModel.findByIdAndRemove(id);
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const editUser = async (id: string, newUser: IUser) => {
-  data = readData();
-  let { users } = data;
-  let res: {
-    user?: IUser;
-    error?: unknown | boolean;
-  } = {};
-
-  const newUsers = users?.map((user) => {
-    if (user.id === id) {
-      const editUser = formatEditUser(newUser, user);
-      res.user = editUser;
-    } else {
-      return user;
-    }
-  });
-  const newData = JSON.stringify({ ...data, users: newUsers });
-  const err = await writeData(newData);
-  res.error = err;
-
-  return res;
+const editUser = async (id: string, body: any) => {
+  const editUser = formatEditUser(body);
+  try {
+    const user = await UserModel.findByIdAndUpdate(id, editUser, {
+      new: true,
+    });
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export default {

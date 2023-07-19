@@ -1,12 +1,16 @@
-export const UserModel = {
+import mongoose from "mongoose";
+
+const UserSchema = new mongoose.Schema({
   id: {
     type: "string",
   },
   name: {
     type: "string",
+    required: true,
   },
   email: {
     type: "string",
+    required: true,
   },
   phone: {
     type: "string",
@@ -17,5 +21,5 @@ export const UserModel = {
   updatedAt: {
     type: "string",
   },
-};
-export const requiredUsersFields: string[] = ["email", "name"];
+});
+export const UserModel = mongoose.model("users", UserSchema);
