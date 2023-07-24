@@ -21,7 +21,7 @@ const getUserById = async (id: string) => {
 };
 const getUserByEmail = async (email?: string) => {
   try {
-    const [user] = await UserModel.find({ email: email }).exec();
+    const [user] = await UserModel.find({ email: email });
     return user;
   } catch (error) {
     console.log(error);
@@ -48,7 +48,8 @@ const deleteUser = async (id: string) => {
 };
 
 const editUser = async (id: string, body: any) => {
-  const editUser = formatEditUser(body);
+  const fields = Object.keys(UserModel.schema.obj);
+  const editUser = formatEditUser(fields, body);
   try {
     const user = await UserModel.findByIdAndUpdate(id, editUser, {
       new: true,

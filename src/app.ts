@@ -8,9 +8,8 @@ const jsonParser = bodyParser.json();
 config();
 
 import mongoose from "mongoose";
-mongoose
-  .connect("mongodb://localhost:27017/test")
-  .catch((error) => console.log(error));
+const data = process.env.DATABASE;
+mongoose.connect(data!).catch((error) => console.log(error));
 
 const port = process.env.PORT || 9999;
 
@@ -27,6 +26,3 @@ app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
 export default app;
-function handleError(error: any): any {
-  throw new Error("Function not implemented.");
-}

@@ -26,16 +26,10 @@ export type IApplicationWallet = {
   applicationId?: string;
   createdAt?: string;
 };
-export type IData = {
-  users?: IUser[];
-  wallets?: IWallet[];
-  applications?: IApplication[];
-  applicationWallets?: IApplicationWallet[];
-};
+
 export type IResponse = {
   user?: IUser;
   wallet?: IWallet;
   application?: IApplication;
-
   error?: unknown | boolean;
 };

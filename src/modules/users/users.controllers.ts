@@ -7,7 +7,9 @@ const getUsers = async (_req: Request, res: Response) => {
   if (users) {
     res.json(users);
   } else {
-    res.status(404).json("Sorry, cant find Users");
+    res.status(404).json({
+      message: "Sorry, cant find Users",
+    });
   }
 };
 const getUser = async (req: Request, res: Response) => {
@@ -15,7 +17,9 @@ const getUser = async (req: Request, res: Response) => {
   if (user) {
     res.json(user);
   } else {
-    res.status(404).json("Sorry, cant find User");
+    res.status(404).json({
+      message: "Sorry, cant find User",
+    });
   }
 };
 
