@@ -13,7 +13,7 @@ const getUsers = async (_req: Request, res: Response) => {
   }
 };
 const getUser = async (req: Request, res: Response) => {
-  const user = await UsersServices.getUserById(req.params.id);
+  const user = await UsersServices.getUserById(req.params.userId);
   if (user) {
     res.json(user);
   } else {
@@ -43,14 +43,14 @@ const createUser = async (req: Request, res: Response) => {
 };
 
 const deleteUser = async (req: Request, res: Response) => {
-  const deleteUser = await UsersServices.getUserById(req.params.id);
+  const deleteUser = await UsersServices.getUserById(req.params.userId);
   if (!deleteUser) {
     res.status(400).json({
       message: "User not found",
     });
     return;
   }
-  const resUser = await UsersServices.deleteUser(req.params.id);
+  const resUser = await UsersServices.deleteUser(req.params.userId);
   if (!resUser) {
     res.status(500).json({
       message: "Something wrong",
@@ -61,7 +61,7 @@ const deleteUser = async (req: Request, res: Response) => {
 };
 
 const editUser = async (req: Request, res: Response) => {
-  let editUser = await UsersServices.getUserById(req.params.id);
+  let editUser = await UsersServices.getUserById(req.params.userId);
   if (!editUser) {
     res.status(400).json({
       message: "User not found",
@@ -76,7 +76,7 @@ const editUser = async (req: Request, res: Response) => {
     });
     return;
   }
-  const resUser = await UsersServices.editUser(req.params.id, req.body);
+  const resUser = await UsersServices.editUser(req.params.userId, req.body);
 
   if (!resUser) {
     res.status(500).json({

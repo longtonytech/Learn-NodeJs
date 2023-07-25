@@ -4,23 +4,23 @@ const ApplicationWalletSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
+      ref: "users",
       required: true,
     },
     walletId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Wallets",
+      ref: "wallets",
       required: true,
     },
     applicationId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Applications",
+      ref: "applications",
       required: true,
     },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 export const ApplicationWalletModel = mongoose.model(
-  "ApplicationWallets",
+  "applicationWallets",
   ApplicationWalletSchema
 );

@@ -27,6 +27,14 @@ const getApplicationByName = async (name?: string) => {
     console.log(error);
   }
 };
+const getApplicationsByUserId = async (userId?: string) => {
+  try {
+    const application = await ApplicationModel.find({ userId: userId });
+    return application;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const createApplication = async (application: IApplication) => {
   const applicationModel = new ApplicationModel(application);
@@ -71,4 +79,5 @@ export default {
   deleteApplication,
   editApplication,
   getApplicationByName,
+  getApplicationsByUserId,
 };

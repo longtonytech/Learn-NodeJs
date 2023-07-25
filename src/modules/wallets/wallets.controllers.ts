@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import WalletsServices from "@/modules/wallets/wallets.services";
 import { formatCreateWallet } from "./wallets.utils";
 
-const getWallets = async (_req: Request, res: Response) => {
-  const wallets = await WalletsServices.getWallets();
-  if (wallets) {
+const getWalletsByUserId = async (req: Request, res: Response) => {
+  const wallets = await WalletsServices.getWallestByUserId(req.params.userId);
+  if (wallets?.length && wallets.length > 0) {
     res.json(wallets);
   } else {
     res.status(404).json({
@@ -12,6 +12,17 @@ const getWallets = async (_req: Request, res: Response) => {
     });
   }
 };
+const getWallets = async (_req: Request, res: Response) => {
+  const wallets = await WalletsServices.getWallets();
+  if (wallets?.length && wallets.length > 0) {
+    res.json(wallets);
+  } else {
+    res.status(404).json({
+      message: "Sorry, cant find Wallets",
+    });
+  }
+};
+
 const getWallet = async (req: Request, res: Response) => {
   const wallet = await WalletsServices.getWalletById(req.params.id);
   if (wallet) {
@@ -61,6 +72,23 @@ const deleteWallet = async (req: Request, res: Response) => {
     res.json(resWallet);
   }
 };
+const deleteWalletByUserId = async (req: Request, res: Response) => {
+  const deleteWallets = await WalletsServices.getWallestByUserId(
+    req.params.userId
+  );
+  if (deleteWallets!.length > 0) {
+    const resWallets = await Promise.all(
+      deleteWallets!.map((deleteWallet) =>
+        WalletsServices.deleteWallet(deleteWallet.id)
+      )
+    );
+    res.json(resWallets);
+  } else {
+    res.status(400).json({
+      message: "Wallets not found",
+    });
+  }
+};
 
 const editWallet = async (req: Request, res: Response) => {
   let editWallet = await WalletsServices.getWalletById(req.params.id);
@@ -97,4 +125,6 @@ export default {
   createWallet,
   deleteWallet,
   editWallet,
+  deleteWalletByUserId,
+  getWalletsByUserId,
 };

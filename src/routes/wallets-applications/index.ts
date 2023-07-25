@@ -1,5 +1,5 @@
+import applicationWalletsControllers from "@/modules/application-wallets/application-wallets.controllers";
 import express from "express";
-import applicationWalletsControllers from "@/modules/applicationWallets/applicationWallets.controllers";
 
 const router = express.Router();
 

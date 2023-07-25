@@ -1,6 +1,6 @@
 import { IApplicationWallet } from "@/types";
-import { ApplicationWalletModel } from "./applicationWallets.models";
-import { formatEditApplicationWallet } from "./applicationWallets.utils";
+import { ApplicationWalletModel } from "./application-wallets.models";
+import { formatEditApplicationWallet } from "./application-wallets.utils";
 
 const getApplicationWallets = async () => {
   let applicationWallets: IApplicationWallet[] = [];

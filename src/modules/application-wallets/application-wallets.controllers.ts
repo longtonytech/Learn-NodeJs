@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import ApplicationWalletsServices from "@/modules/applicationWallets/applicationWallets.services";
-import { formatCreateApplicationWallet } from "./applicationWallets.utils";
+import ApplicationWalletsServices from "@/modules/application-wallets/application-wallets.services";
+import { formatCreateApplicationWallet } from "./application-wallets.utils";
 
 const getApplicationWallets = async (_req: Request, res: Response) => {
   const applicationWallets =

@@ -4,7 +4,7 @@ const WalletSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
+      ref: "users",
       required: true,
     },
     walletAddress: {
@@ -20,4 +20,4 @@ const WalletSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-export const WalletModel = mongoose.model("Wallets", WalletSchema);
+export const WalletModel = mongoose.model("wallets", WalletSchema);
