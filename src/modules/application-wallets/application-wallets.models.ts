@@ -18,7 +18,7 @@ const ApplicationWalletSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: { createdAt: true, updatedAt: false } }
+  { timestamps: true }
 );
 export const ApplicationWalletModel = mongoose.model(
   "applicationWallets",

@@ -1,10 +1,10 @@
 import express from "express";
 import walletsControllers from "@/modules/wallets/wallets.controllers";
-import applications from "@/routes/applications";
+import walletsApplitcationsRoutes from "@/routes/wallets-applications";
 
 const router = express.Router({ mergeParams: true });
 
-router.use("/:walletId/applications", applications);
+router.use("/:walletId/applications", walletsApplitcationsRoutes);
 
 router.get("/", walletsControllers.getWallets);
 

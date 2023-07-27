@@ -29,8 +29,16 @@ const getApplicationByName = async (name?: string) => {
 };
 const getApplicationsByUserId = async (userId?: string) => {
   try {
-    const application = await ApplicationModel.find({ userId: userId });
-    return application;
+    const applications = await ApplicationModel.find({ userId: userId });
+    return applications;
+  } catch (error) {
+    console.log(error);
+  }
+};
+const getApplicationsByWalletId = async (walletId?: string) => {
+  try {
+    const applications = await ApplicationModel.find({ walletId: walletId });
+    return applications;
   } catch (error) {
     console.log(error);
   }
@@ -80,4 +88,5 @@ export default {
   editApplication,
   getApplicationByName,
   getApplicationsByUserId,
+  getApplicationsByWalletId,
 };

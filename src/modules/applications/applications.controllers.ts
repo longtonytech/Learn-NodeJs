@@ -14,6 +14,18 @@ const getApplicationsByUserId = async (req: Request, res: Response) => {
     });
   }
 };
+const getApplicationsByWalletId = async (req: Request, res: Response) => {
+  const applications = await ApplicationsServices.getApplicationsByWalletId(
+    req.params.walletId
+  );
+  if (applications?.length && applications.length > 0) {
+    res.json(applications);
+  } else {
+    res.status(404).json({
+      message: "Sorry, cant find Applications",
+    });
+  }
+};
 const getApplications = async (_req: Request, res: Response) => {
   const applications = await ApplicationsServices.getApplications();
   if (applications?.length && applications.length > 0) {
@@ -26,7 +38,7 @@ const getApplications = async (_req: Request, res: Response) => {
 };
 const getApplication = async (req: Request, res: Response) => {
   const application = await ApplicationsServices.getApplicationById(
-    req.params.id
+    req.params.applicationId
   );
   if (application) {
     res.json(application);
@@ -62,7 +74,7 @@ const createApplication = async (req: Request, res: Response) => {
 
 const deleteApplication = async (req: Request, res: Response) => {
   const deleteApplication = await ApplicationsServices.getApplicationById(
-    req.params.id
+    req.params.applicationId
   );
   if (!deleteApplication) {
     res.status(400).json({
@@ -71,7 +83,7 @@ const deleteApplication = async (req: Request, res: Response) => {
     return;
   }
   const resApplication = await ApplicationsServices.deleteApplication(
-    req.params.id
+    deleteApplication.id
   );
   if (!resApplication) {
     res.status(500).json({
@@ -98,10 +110,26 @@ const deleteApplicationsByUserId = async (req: Request, res: Response) => {
     });
   }
 };
+const deleteApplicationsByWalletId = async (req: Request, res: Response) => {
+  const deleteApplications =
+    await ApplicationsServices.getApplicationsByWalletId(req.params.walletId);
+  if (deleteApplications!.length > 0) {
+    const resWallets = await Promise.all(
+      deleteApplications!.map((deleteApplication) =>
+        ApplicationsServices.deleteApplication(deleteApplication.id)
+      )
+    );
+    res.json(resWallets);
+  } else {
+    res.status(400).json({
+      message: "Applications not found",
+    });
+  }
+};
 
 const editApplication = async (req: Request, res: Response) => {
-  let editApplication = await ApplicationsServices.getApplicationById(
-    req.params.id
+  const editApplication = await ApplicationsServices.getApplicationById(
+    req.params.applicationId
   );
   if (!editApplication) {
     res.status(400).json({
@@ -115,12 +143,12 @@ const editApplication = async (req: Request, res: Response) => {
 
   if (checkedApplication) {
     res.status(400).json({
-      message: "ApplicationAddress has existed",
+      message: "Application has existed",
     });
     return;
   }
   const resApplication = await ApplicationsServices.editApplication(
-    req.params.id,
+    editApplication.id,
     req.body
   );
 
@@ -141,4 +169,6 @@ export default {
   deleteApplicationsByUserId,
   editApplication,
   getApplicationsByUserId,
+  getApplicationsByWalletId,
+  deleteApplicationsByWalletId,
 };

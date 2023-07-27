@@ -35,6 +35,14 @@ const getWallestByUserId = async (userId?: string) => {
     console.log(error);
   }
 };
+const getWallestByApplicationId = async (applicationId?: string) => {
+  try {
+    const wallets = await WalletModel.find({ applicationId: applicationId });
+    return wallets;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const createWallet = async (wallet: IWallet) => {
   const walletModel = new WalletModel(wallet);
@@ -76,4 +84,5 @@ export default {
   editWallet,
   getWalletByAddress,
   getWallestByUserId,
+  getWallestByApplicationId,
 };

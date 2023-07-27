@@ -10,6 +10,7 @@ const WalletSchema = new mongoose.Schema(
     walletAddress: {
       type: "string",
       required: true,
+      unique: true,
     },
     amountOfMoney: {
       type: "string",
@@ -20,4 +21,5 @@ const WalletSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 export const WalletModel = mongoose.model("wallets", WalletSchema);

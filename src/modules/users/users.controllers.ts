@@ -50,7 +50,7 @@ const deleteUser = async (req: Request, res: Response) => {
     });
     return;
   }
-  const resUser = await UsersServices.deleteUser(req.params.userId);
+  const resUser = await UsersServices.deleteUser(deleteUser.id);
   if (!resUser) {
     res.status(500).json({
       message: "Something wrong",
@@ -61,7 +61,7 @@ const deleteUser = async (req: Request, res: Response) => {
 };
 
 const editUser = async (req: Request, res: Response) => {
-  let editUser = await UsersServices.getUserById(req.params.userId);
+  const editUser = await UsersServices.getUserById(req.params.userId);
   if (!editUser) {
     res.status(400).json({
       message: "User not found",
@@ -76,7 +76,7 @@ const editUser = async (req: Request, res: Response) => {
     });
     return;
   }
-  const resUser = await UsersServices.editUser(req.params.userId, req.body);
+  const resUser = await UsersServices.editUser(editUser.id, req.body);
 
   if (!resUser) {
     res.status(500).json({

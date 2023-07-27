@@ -1,16 +1,19 @@
 import express from "express";
 import applicationsControllers from "@/modules/applications/applications.controllers";
+import applicationsWalletsRoutes from "@/routes/applications-wallets";
 
 const router = express.Router({ mergeParams: true });
 
+router.use("/:applicationId/wallets", applicationsWalletsRoutes);
+
 router.get("/", applicationsControllers.getApplications);
 
-router.get("/:id", applicationsControllers.getApplication);
+router.get("/:applicationId", applicationsControllers.getApplication);
 
 router.post("/", applicationsControllers.createApplication);
 
-router.delete("/:id", applicationsControllers.deleteApplication);
+router.delete("/:applicationId", applicationsControllers.deleteApplication);
 
-router.put("/:id", applicationsControllers.editApplication);
+router.put("/:applicationId", applicationsControllers.editApplication);
 
 export default router;

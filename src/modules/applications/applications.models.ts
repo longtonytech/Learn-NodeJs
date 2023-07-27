@@ -13,6 +13,7 @@ const ApplicationSchema = new mongoose.Schema(
     name: {
       type: "string",
       required: true,
+      unique: true,
     },
   },
   { timestamps: true }
