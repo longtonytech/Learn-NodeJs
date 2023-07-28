@@ -3,29 +3,35 @@ import UsersControllers from "@/modules/users/users.controllers";
 import usersWalletsRoutes from "@/routes/users-wallets";
 import usersApplitcationsRoutes from "@/routes/users-applications";
 import { validateMiddleWare } from "@/middlewares/validation.middleware";
-import { validateUser } from "@/modules/users/users.models";
+import {
+  validateCreateUser,
+  validateEditUser,
+} from "@/modules/users/users.validation";
+import { verifyToken } from "@/middlewares/auth.middlewares";
 
 const router = express.Router();
 
-router.use("/:userId/wallets", usersWalletsRoutes);
+router.use("/:userId/wallets", [verifyToken], usersWalletsRoutes);
 
-router.use("/:userId/applications", usersApplitcationsRoutes);
+router.use("/:userId/applications", [verifyToken], usersApplitcationsRoutes);
 
-router.get("/", UsersControllers.getUsers);
+router.get("/", [verifyToken], UsersControllers.getUsers);
 
-router.get("/:userId", UsersControllers.getUser);
+router.get("/:userId", [verifyToken], UsersControllers.getUser);
 
 router.post(
   "/",
-  [validateMiddleWare(validateUser)],
+  [validateMiddleWare(validateCreateUser)],
+  [verifyToken],
   UsersControllers.createUser
 );
 
-router.delete("/:userId", UsersControllers.deleteUser);
+router.delete("/:userId", [verifyToken], UsersControllers.deleteUser);
 
 router.put(
   "/:userId",
-  [validateMiddleWare(validateUser)],
+  [validateMiddleWare(validateEditUser)],
+  [verifyToken],
   UsersControllers.editUser
 );
 

@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import UsersServices from "@/modules/users/users.services";
 import { formatCreateUser } from "./users.utils";
+import bcrypt from "bcrypt";
+const saltRounds = 10;
 
 const getUsers = async (_req: Request, res: Response) => {
   const users = await UsersServices.getUsers();
@@ -32,13 +34,18 @@ const createUser = async (req: Request, res: Response) => {
     });
     return;
   }
-  const resUser = await UsersServices.createUser(user);
+  const hashPassword = bcrypt.hashSync(user.password, saltRounds);
+  const newUser = {
+    ...user,
+    password: hashPassword,
+  };
+  const resUser = await UsersServices.createUser(newUser);
   if (!resUser) {
     res.status(400).json({
       message: "Something wrong",
     });
   } else {
-    res.json(resUser);
+    res.json(resUser.email);
   }
 };
 

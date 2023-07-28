@@ -12,4 +12,6 @@ export const formatCreateUser = (body: any) => ({
   name: body.name,
   email: body.email,
   phone: body.phone || "emptyPhone",
+  password: body.password,
+  role: "user",
 });
