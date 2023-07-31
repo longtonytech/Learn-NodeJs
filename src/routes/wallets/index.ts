@@ -1,19 +1,17 @@
 import express from "express";
 import walletsControllers from "@/modules/wallets/wallets.controllers";
-import walletsApplitcationsRoutes from "@/routes/wallets-applications";
+import { verifyToken } from "@/middlewares/auth.middlewares";
 
 const router = express.Router({ mergeParams: true });
 
-router.use("/:walletId/applications", walletsApplitcationsRoutes);
+router.get("/", [verifyToken], walletsControllers.getWallets);
 
-router.get("/", walletsControllers.getWallets);
+router.get("/:walletId", [verifyToken], walletsControllers.getWallet);
 
-router.get("/:walletId", walletsControllers.getWallet);
+router.post("/", [verifyToken], walletsControllers.createWallet);
 
-router.post("/", walletsControllers.createWallet);
+router.delete("/:walletId", [verifyToken], walletsControllers.deleteWallet);
 
-router.delete("/:walletId", walletsControllers.deleteWallet);
-
-router.put("/:walletId", walletsControllers.editWallet);
+router.put("/:walletId", [verifyToken], walletsControllers.editWallet);
 
 export default router;

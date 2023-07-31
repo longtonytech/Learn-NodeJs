@@ -1,9 +1,34 @@
 import express from "express";
-const router = express.Router({ mergeParams: true });
-import walletsControllers from "@/modules/wallets/wallets.controllers";
+import applicationWalletsControllers from "@/modules/applications-wallets/applications-wallets.controllers";
+import applicationWalletsWalletsRoutes from "@/routes/applications-wallets-wallets";
+import applicationWalletsApplicationsRoutes from "@/routes/applications-wallets-applications";
+import { verifyToken } from "@/middlewares/auth.middlewares";
 
-router.delete("/", walletsControllers.deleteWalletsByApplicationId);
+const router = express.Router();
+router.use("/wallets", applicationWalletsWalletsRoutes);
 
-router.get("/", walletsControllers.getWalletsByApplicationId);
+router.use("/applications", applicationWalletsApplicationsRoutes);
+
+router.get(
+  "/",
+  [verifyToken],
+  applicationWalletsControllers.getApplicationWallets
+);
+
+router.post(
+  "/",
+  [verifyToken],
+  applicationWalletsControllers.createApplicationWallet
+);
+
+// router.delete(
+//   "/:applicationWalletId",
+//   applicationWalletsControllers.deleteApplicationWallet
+// );
+
+// router.put(
+//   "/:applicationWalletId",
+//   applicationWalletsControllers.editApplicationWallet
+// );
 
 export default router;

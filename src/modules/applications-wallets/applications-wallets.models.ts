@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const ApplicationWalletSchema = new mongoose.Schema(
   {
+    name: {
+      type: "string",
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
@@ -21,6 +24,6 @@ const ApplicationWalletSchema = new mongoose.Schema(
   { timestamps: true }
 );
 export const ApplicationWalletModel = mongoose.model(
-  "applicationWallets",
+  "applicationsWallets",
   ApplicationWalletSchema
 );

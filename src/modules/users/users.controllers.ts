@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import UsersServices from "@/modules/users/users.services";
 import { formatCreateUser } from "./users.utils";
 import bcrypt from "bcrypt";
+import { IRequestType } from "@/types";
 const saltRounds = 10;
 
-const getUsers = async (_req: Request, res: Response) => {
+const getUsers = async (req: Request & IRequestType, res: Response) => {
   const users = await UsersServices.getUsers();
   if (users) {
     res.json(users);

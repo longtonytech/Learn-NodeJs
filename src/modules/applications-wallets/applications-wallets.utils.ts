@@ -8,8 +8,9 @@ export const formatEditApplicationWallet = (fields: string[], body: any) => {
   return editApplicationWallet;
 };
 
-export const formatCreateApplicationWallet = (body: any) => ({
-  userId: body.userId,
-  walletId: body.walletId,
-  applicationId: body.applicationId,
+export const formatCreateApplicationWallet = (req: any) => ({
+  name: req.body.name || "emptyName",
+  userId: req.userId,
+  walletId: req.body.walletId,
+  applicationId: req.body.applicationId,
 });

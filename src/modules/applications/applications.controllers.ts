@@ -1,8 +1,17 @@
 import { Request, Response } from "express";
 import ApplicationsServices from "@/modules/applications/applications.services";
 import { formatCreateApplication } from "./applications.utils";
+import { IRequestType } from "@/types";
 
-const getApplicationsByUserId = async (req: Request, res: Response) => {
+const getApplicationsByUserId = async (
+  req: Request & IRequestType,
+  res: Response
+) => {
+  if (req.userId !== req.params.userId) {
+    return res.status(400).json({
+      message: "Unauthorized!",
+    });
+  }
   const applications = await ApplicationsServices.getApplicationsByUserId(
     req.params.userId
   );
@@ -49,8 +58,11 @@ const getApplication = async (req: Request, res: Response) => {
   }
 };
 
-const createApplication = async (req: Request, res: Response) => {
-  const application = formatCreateApplication(req.body);
+const createApplication = async (
+  req: Request & IRequestType,
+  res: Response
+) => {
+  const application = formatCreateApplication(req);
   const checkedApplication = await ApplicationsServices.getApplicationByName(
     application.name
   );
@@ -93,7 +105,15 @@ const deleteApplication = async (req: Request, res: Response) => {
     res.json(resApplication);
   }
 };
-const deleteApplicationsByUserId = async (req: Request, res: Response) => {
+const deleteApplicationsByUserId = async (
+  req: Request & IRequestType,
+  res: Response
+) => {
+  if (req.userId !== req.params.userId) {
+    return res.status(400).json({
+      message: "Unauthorized!",
+    });
+  }
   const deleteApplications = await ApplicationsServices.getApplicationsByUserId(
     req.params.userId
   );

@@ -1,20 +1,53 @@
 import { IApplicationWallet } from "@/types";
-import { ApplicationWalletModel } from "./application-wallets.models";
-import { formatEditApplicationWallet } from "./application-wallets.utils";
+import { ApplicationWalletModel } from "./applications-wallets.models";
+import { formatEditApplicationWallet } from "./applications-wallets.utils";
 
-const getApplicationWallets = async () => {
+const getApplicationWallets = async (userId?: string) => {
   let applicationWallets: IApplicationWallet[] = [];
   try {
-    applicationWallets = await ApplicationWalletModel.find({});
+    applicationWallets = await ApplicationWalletModel.find({ userId: userId });
     return applicationWallets;
   } catch (error) {
     console.log(error);
   }
 };
-const getApplicationWalletById = async (id: string) => {
+
+const getApplicationWallet = async (applicationWallet: IApplicationWallet) => {
   try {
-    const applicationWallet = await ApplicationWalletModel.findById(id);
-    return applicationWallet;
+    const resApplicationWallet = await ApplicationWalletModel.findOne(
+      applicationWallet
+    );
+    return resApplicationWallet;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getApplicationWalletsByWalletId = async (
+  userId?: string,
+  walletId?: string
+) => {
+  try {
+    const applicationWallets = await ApplicationWalletModel.find({
+      userId: userId,
+      walletId: walletId,
+    });
+    return applicationWallets;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getApplicationWalletsByApplicationId = async (
+  userId?: string,
+  applicationId?: string
+) => {
+  try {
+    const applicationWallets = await ApplicationWalletModel.find({
+      userId: userId,
+      applicationId: applicationId,
+    });
+    return applicationWallets;
   } catch (error) {
     console.log(error);
   }
@@ -62,8 +95,10 @@ const editApplicationWallet = async (id: string, body: any) => {
 
 export default {
   getApplicationWallets,
-  getApplicationWalletById,
   createApplicationWallet,
   deleteApplicationWallet,
   editApplicationWallet,
+  getApplicationWalletsByWalletId,
+  getApplicationWallet,
+  getApplicationWalletsByApplicationId,
 };

@@ -18,12 +18,12 @@ const login = async (req: Request, res: Response) => {
     return res.status(401).send("Invalid Password!");
   }
 
-  var token = jwt.sign({ email: user.email, id: user.id }, secretKey!, {
+  var token = jwt.sign({ userId: user.id }, secretKey!, {
     expiresIn: 86400, // 24 hours
   });
 
   res.status(200).send({
-    id: user.id,
+    userId: user.id,
     accessToken: token,
   });
 };

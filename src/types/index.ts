@@ -23,10 +23,12 @@ export type IApplication = {
 };
 export type IApplicationWallet = {
   id?: string;
+  name?: string;
   userId?: string;
   walletId?: string;
   applicationId?: string;
   createdAt?: string;
+  updatedAt?: string;
 };
 
 export type IResponse = {
@@ -34,4 +36,7 @@ export type IResponse = {
   wallet?: IWallet;
   application?: IApplication;
   error?: unknown | boolean;
+};
+export type IRequestType = {
+  userId?: string;
 };

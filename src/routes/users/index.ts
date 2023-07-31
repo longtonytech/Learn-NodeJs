@@ -22,7 +22,6 @@ router.get("/:userId", [verifyToken], UsersControllers.getUser);
 router.post(
   "/",
   [validateMiddleWare(validateCreateUser)],
-  [verifyToken],
   UsersControllers.createUser
 );
 
