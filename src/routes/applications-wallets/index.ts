@@ -21,14 +21,4 @@ router.post(
   applicationWalletsControllers.createApplicationWallet
 );
 
-// router.delete(
-//   "/:applicationWalletId",
-//   applicationWalletsControllers.deleteApplicationWallet
-// );
-
-// router.put(
-//   "/:applicationWalletId",
-//   applicationWalletsControllers.editApplicationWallet
-// );
-
 export default router;

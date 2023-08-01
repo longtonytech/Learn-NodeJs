@@ -1,6 +1,5 @@
 import { IApplicationWallet } from "@/types";
-import { ApplicationWalletModel } from "./applications-wallets.models";
-import { formatEditApplicationWallet } from "./applications-wallets.utils";
+import { ApplicationWalletModel } from "@/modules/applications-wallets/applications-wallets.models";
 
 const getApplicationWallets = async (userId?: string) => {
   let applicationWallets: IApplicationWallet[] = [];
@@ -65,29 +64,32 @@ const createApplicationWallet = async (
   }
 };
 
-const deleteApplicationWallet = async (id: string) => {
+const deleteApplicationWallet = async (
+  applicationWallet?: IApplicationWallet
+) => {
   try {
-    const applicationWallet = await ApplicationWalletModel.findByIdAndRemove(
-      id
+    const resApplicationWallet = await ApplicationWalletModel.findOneAndRemove(
+      applicationWallet
     );
-    return applicationWallet;
+    return resApplicationWallet;
   } catch (error) {
     console.log(error);
   }
 };
 
-const editApplicationWallet = async (id: string, body: any) => {
-  const fields = Object.keys(ApplicationWalletModel.schema.obj);
-  const editApplicationWallet = formatEditApplicationWallet(fields, body);
+const editApplicationWallet = async (
+  body: any,
+  applicationWallet: IApplicationWallet
+) => {
   try {
-    const applicationWallet = await ApplicationWalletModel.findByIdAndUpdate(
-      id,
-      editApplicationWallet,
+    const resApplicationWallet = await ApplicationWalletModel.findOneAndUpdate(
+      applicationWallet,
+      { name: body.name },
       {
         new: true,
       }
     );
-    return applicationWallet;
+    return resApplicationWallet;
   } catch (error) {
     console.log(error);
   }

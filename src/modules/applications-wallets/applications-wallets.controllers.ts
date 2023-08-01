@@ -17,6 +17,24 @@ const getApplicationWallets = async (
     });
   }
 };
+const getApplicationWallet = async (
+  req: Request & IRequestType,
+  res: Response
+) => {
+  const applicationWallet =
+    await ApplicationWalletsServices.getApplicationWallet({
+      userId: req.userId,
+      walletId: req.params.walletId,
+      applicationId: req.params.applicationId,
+    });
+  if (applicationWallet) {
+    res.json(applicationWallet);
+  } else {
+    res.status(404).json({
+      message: "Sorry, cant find ApplicationWallet",
+    });
+  }
+};
 
 const getApplicationWalletsByWalletId = async (
   req: Request & IRequestType,
@@ -77,29 +95,6 @@ const createApplicationWallet = async (
   }
 };
 
-// const deleteApplicationWallet = async (req: Request, res: Response) => {
-//   const deleteApplicationWallet =
-//     await ApplicationWalletsServices.getApplicationWalletById(
-//       req.params.applicationWalletId
-//     );
-//   if (!deleteApplicationWallet) {
-//     res.status(400).json({
-//       message: "ApplicationWallet not found",
-//     });
-//     return;
-//   }
-//   const resApplicationWallet =
-//     await ApplicationWalletsServices.deleteApplicationWallet(
-//       deleteApplicationWallet.id
-//     );
-//   if (!resApplicationWallet) {
-//     res.status(500).json({
-//       message: "Something wrong",
-//     });
-//   } else {
-//     res.json(resApplicationWallet);
-//   }
-// };
 const deleteApplicationWalletsByWalletId = async (
   req: Request & IRequestType,
   res: Response
@@ -149,42 +144,45 @@ const deleteApplicationWalletsByApplicationId = async (
   }
 };
 
-// const editApplicationWallet = async (req: Request, res: Response) => {
-//   const editApplicationWallet =
-//     await ApplicationWalletsServices.getApplicationWalletById(
-//       req.params.applicationWalletId
-//     );
-//   if (!editApplicationWallet) {
-//     res.status(400).json({
-//       message: "ApplicationWallet not found",
-//     });
-//     return;
-//   }
-//   const checkedApplicationWallet =
-//     await ApplicationWalletsServices.getApplicationWalletByAddress(
-//       req.body.applicationWalletAddress
-//     );
+const editApplicationWallet = async (
+  req: Request & IRequestType,
+  res: Response
+) => {
+  const resApplicationWallet =
+    await ApplicationWalletsServices.editApplicationWallet(req.body, {
+      userId: req.userId,
+      walletId: req.params.walletId,
+      applicationId: req.params.applicationId,
+    });
 
-//   if (checkedApplicationWallet) {
-//     res.status(400).json({
-//       message: "ApplicationWalletAddress has existed",
-//     });
-//     return;
-//   }
-//   const resApplicationWallet =
-//     await ApplicationWalletsServices.editApplicationWallet(
-//       editApplicationWallet.id,
-//       req.body
-//     );
+  if (!resApplicationWallet) {
+    res.status(500).json({
+      message: "Something wrong",
+    });
+  } else {
+    res.json(resApplicationWallet);
+  }
+};
 
-//   if (!resApplicationWallet) {
-//     res.status(500).json({
-//       message: "Something wrong",
-//     });
-//   } else {
-//     res.json(resApplicationWallet);
-//   }
-// };
+const deleteApplicationWallet = async (
+  req: Request & IRequestType,
+  res: Response
+) => {
+  const resApplicationWallet =
+    await ApplicationWalletsServices.deleteApplicationWallet({
+      userId: req.userId,
+      walletId: req.params.walletId,
+      applicationId: req.params.applicationId,
+    });
+
+  if (!resApplicationWallet) {
+    res.status(500).json({
+      message: "Something wrong",
+    });
+  } else {
+    res.json(resApplicationWallet);
+  }
+};
 
 export default {
   getApplicationWallets,
@@ -193,4 +191,7 @@ export default {
   deleteApplicationWalletsByWalletId,
   getApplicationWalletsByApplicationId,
   deleteApplicationWalletsByApplicationId,
+  editApplicationWallet,
+  getApplicationWallet,
+  deleteApplicationWallet,
 };
