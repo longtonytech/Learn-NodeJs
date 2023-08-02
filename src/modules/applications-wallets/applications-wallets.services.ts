@@ -11,6 +11,16 @@ const getApplicationWallets = async (userId?: string) => {
   }
 };
 
+const getApplicationWalletById = async (applicationWalletId: string) => {
+  try {
+    const resApplicationWallet = await ApplicationWalletModel.findById(
+      applicationWalletId
+    );
+    return resApplicationWallet;
+  } catch (error) {
+    console.log(error);
+  }
+};
 const getApplicationWallet = async (applicationWallet: IApplicationWallet) => {
   try {
     const resApplicationWallet = await ApplicationWalletModel.findOne(
@@ -64,12 +74,10 @@ const createApplicationWallet = async (
   }
 };
 
-const deleteApplicationWallet = async (
-  applicationWallet?: IApplicationWallet
-) => {
+const deleteApplicationWallet = async (applicationWalletId?: string) => {
   try {
-    const resApplicationWallet = await ApplicationWalletModel.findOneAndRemove(
-      applicationWallet
+    const resApplicationWallet = await ApplicationWalletModel.findByIdAndRemove(
+      applicationWalletId
     );
     return resApplicationWallet;
   } catch (error) {
@@ -78,13 +86,13 @@ const deleteApplicationWallet = async (
 };
 
 const editApplicationWallet = async (
-  body: any,
-  applicationWallet: IApplicationWallet
+  name: string,
+  applicationWalletId: string
 ) => {
   try {
-    const resApplicationWallet = await ApplicationWalletModel.findOneAndUpdate(
-      applicationWallet,
-      { name: body.name },
+    const resApplicationWallet = await ApplicationWalletModel.findByIdAndUpdate(
+      applicationWalletId,
+      { name: name },
       {
         new: true,
       }
@@ -103,4 +111,5 @@ export default {
   getApplicationWalletsByWalletId,
   getApplicationWallet,
   getApplicationWalletsByApplicationId,
+  getApplicationWalletById,
 };
