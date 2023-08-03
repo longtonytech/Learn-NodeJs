@@ -18,6 +18,7 @@ const ApplicationSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+ApplicationSchema.index({ "$**": "text" });
 export const ApplicationModel = mongoose.model(
   "applications",
   ApplicationSchema

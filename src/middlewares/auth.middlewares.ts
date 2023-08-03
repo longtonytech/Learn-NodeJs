@@ -10,12 +10,12 @@ export const verifyToken = (
 ) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    return res.status(403).send({ message: "No token provided!" });
+    return res.status(403).json({ message: "No token provided!" });
   }
   const [, token] = authHeader.split(" ");
   jwt.verify(token, secretKey!, (err, decoded: any) => {
     if (err) {
-      return res.status(401).send({ message: "Unauthorized!" });
+      return res.status(401).json({ message: "Unauthorized!" });
     }
     req.userId = decoded.userId;
     next();

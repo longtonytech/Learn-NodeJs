@@ -4,14 +4,26 @@ import { verifyToken } from "@/middlewares/auth.middlewares";
 
 const router = express.Router({ mergeParams: true });
 
-router.get("/", applicationsControllers.getApplications);
+router.get("/", [verifyToken], applicationsControllers.getApplicationsByUserId);
 
-router.get("/:applicationId", applicationsControllers.getApplication);
+router.get(
+  "/:applicationId",
+  [verifyToken],
+  applicationsControllers.getApplication
+);
 
 router.post("/", [verifyToken], applicationsControllers.createApplication);
 
-router.delete("/:applicationId", applicationsControllers.deleteApplication);
+router.delete(
+  "/:applicationId",
+  [verifyToken],
+  applicationsControllers.deleteApplication
+);
 
-router.put("/:applicationId", applicationsControllers.editApplication);
+router.put(
+  "/:applicationId",
+  [verifyToken],
+  applicationsControllers.editApplication
+);
 
 export default router;

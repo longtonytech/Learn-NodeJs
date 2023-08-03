@@ -2,21 +2,12 @@ import { IApplication } from "@/types";
 import { formatEditApplication } from "./applications.utils";
 import { ApplicationModel } from "./applications.models";
 
-const getApplications = async () => {
-  let applications: IApplication[] = [];
-  try {
-    applications = await ApplicationModel.find({});
-    return applications;
-  } catch (error) {
-    console.log(error);
-  }
-};
 const getApplicationById = async (id: string) => {
   try {
     const application = await ApplicationModel.findById(id);
     return application;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 const getApplicationByName = async (name?: string) => {
@@ -24,15 +15,22 @@ const getApplicationByName = async (name?: string) => {
     const [application] = await ApplicationModel.find({ name: name });
     return application;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
-const getApplicationsByUserId = async (userId?: string) => {
+const getApplicationsByUserId = async (req: any) => {
   try {
-    const applications = await ApplicationModel.find({ userId: userId });
+    console.log(req);
+    const applications = await ApplicationModel.find({
+      userId: req.userId,
+      $text: { $search: req.search },
+    })
+      .limit(req.limit)
+      .skip(req.limit * req.page - req.limit);
+
     return applications;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 const getApplicationsByWalletId = async (walletId?: string) => {
@@ -40,7 +38,7 @@ const getApplicationsByWalletId = async (walletId?: string) => {
     const applications = await ApplicationModel.find({ walletId: walletId });
     return applications;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -50,7 +48,7 @@ const createApplication = async (application: IApplication) => {
     const newApplication = await applicationModel.save();
     return newApplication;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -59,7 +57,7 @@ const deleteApplication = async (id: string) => {
     const application = await ApplicationModel.findByIdAndRemove(id);
     return application;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -76,12 +74,11 @@ const editApplication = async (id: string, body: any) => {
     );
     return application;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
 export default {
-  getApplications,
   getApplicationById,
   createApplication,
   deleteApplication,

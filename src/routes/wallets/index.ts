@@ -4,7 +4,7 @@ import { verifyToken } from "@/middlewares/auth.middlewares";
 
 const router = express.Router({ mergeParams: true });
 
-router.get("/", [verifyToken], walletsControllers.getWallets);
+router.get("/", [verifyToken], walletsControllers.getWalletsByUserId);
 
 router.get("/:walletId", [verifyToken], walletsControllers.getWallet);
 

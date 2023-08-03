@@ -4,6 +4,7 @@ const ApplicationWalletSchema = new mongoose.Schema(
   {
     name: {
       type: "string",
+      required: true,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

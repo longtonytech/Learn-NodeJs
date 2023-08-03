@@ -8,7 +8,7 @@ const getWallets = async () => {
     wallets = await WalletModel.find({});
     return wallets;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 const getWalletById = async (id: string) => {
@@ -16,7 +16,7 @@ const getWalletById = async (id: string) => {
     const wallet = await WalletModel.findById(id);
     return wallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 const getWalletByAddress = async (walletAddress?: string) => {
@@ -24,7 +24,7 @@ const getWalletByAddress = async (walletAddress?: string) => {
     const [wallet] = await WalletModel.find({ walletAddress: walletAddress });
     return wallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 const getWallestByUserId = async (userId?: string) => {
@@ -32,7 +32,7 @@ const getWallestByUserId = async (userId?: string) => {
     const wallets = await WalletModel.find({ userId: userId });
     return wallets;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -42,7 +42,7 @@ const createWallet = async (wallet: IWallet) => {
     const newWallet = await walletModel.save();
     return newWallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -51,7 +51,7 @@ const deleteWallet = async (id: string) => {
     const wallet = await WalletModel.findByIdAndRemove(id);
     return wallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -64,7 +64,7 @@ const editWallet = async (id: string, body: any) => {
     });
     return wallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 

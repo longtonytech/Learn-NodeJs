@@ -7,7 +7,7 @@ const getApplicationWallets = async (userId?: string) => {
     applicationWallets = await ApplicationWalletModel.find({ userId: userId });
     return applicationWallets;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -18,7 +18,7 @@ const getApplicationWalletById = async (applicationWalletId: string) => {
     );
     return resApplicationWallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 const getApplicationWallet = async (applicationWallet: IApplicationWallet) => {
@@ -28,7 +28,7 @@ const getApplicationWallet = async (applicationWallet: IApplicationWallet) => {
     );
     return resApplicationWallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -43,7 +43,7 @@ const getApplicationWalletsByWalletId = async (
     });
     return applicationWallets;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -58,7 +58,7 @@ const getApplicationWalletsByApplicationId = async (
     });
     return applicationWallets;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -70,7 +70,7 @@ const createApplicationWallet = async (
     const newApplicationWallet = await applicationWalletModel.save();
     return newApplicationWallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -81,7 +81,7 @@ const deleteApplicationWallet = async (applicationWalletId?: string) => {
     );
     return resApplicationWallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -94,12 +94,13 @@ const editApplicationWallet = async (
       applicationWalletId,
       { name: name },
       {
+        runValidators: true,
         new: true,
       }
     );
     return resApplicationWallet;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 

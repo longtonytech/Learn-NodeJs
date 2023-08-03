@@ -6,92 +6,83 @@ import { IRequestType } from "@/types";
 const saltRounds = 10;
 
 const getUsers = async (req: Request & IRequestType, res: Response) => {
-  const users = await UsersServices.getUsers();
-  if (users) {
-    res.json(users);
-  } else {
+  try {
+    const users = await UsersServices.getUsers();
+    if (users) {
+      res.json(users);
+    }
+  } catch (error) {
     res.status(404).json({
-      message: "Sorry, cant find Users",
+      message: (error as Error).message,
     });
   }
 };
 const getUser = async (req: Request, res: Response) => {
-  const user = await UsersServices.getUserById(req.params.userId);
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404).json({
-      message: "Sorry, cant find User",
+  try {
+    const user = await UsersServices.getUserById(req.params.userId);
+    if (user) {
+      res.json(user);
+    }
+  } catch (error) {
+    res.status(400).json({
+      message: (error as Error).message,
     });
   }
 };
 
 const createUser = async (req: Request, res: Response) => {
-  const user = formatCreateUser(req.body);
-  const checkedUser = await UsersServices.getUserByEmail(user.email);
-  if (checkedUser) {
-    res.status(400).json({
-      message: "Email has existed",
+  try {
+    const user = formatCreateUser(req.body);
+    const checkedUser = await UsersServices.getUserByEmail(req.body.email);
+    if (checkedUser) {
+      return res.status(400).json({
+        message: "Email has existed",
+      });
+    }
+    const hashPassword = bcrypt.hashSync(user.password, saltRounds);
+    const newUser = {
+      ...user,
+      password: hashPassword,
+    };
+    const resUser = await UsersServices.createUser(newUser);
+    res.json({
+      messsage: "success!",
+      email: resUser.email,
     });
-    return;
-  }
-  const hashPassword = bcrypt.hashSync(user.password, saltRounds);
-  const newUser = {
-    ...user,
-    password: hashPassword,
-  };
-  const resUser = await UsersServices.createUser(newUser);
-  if (!resUser) {
+  } catch (error) {
     res.status(400).json({
-      message: "Something wrong",
+      message: (error as Error).message,
     });
-  } else {
-    res.json(resUser.email);
   }
 };
 
 const deleteUser = async (req: Request, res: Response) => {
-  const deleteUser = await UsersServices.getUserById(req.params.userId);
-  if (!deleteUser) {
-    res.status(400).json({
-      message: "User not found",
-    });
-    return;
-  }
-  const resUser = await UsersServices.deleteUser(deleteUser.id);
-  if (!resUser) {
-    res.status(500).json({
-      message: "Something wrong",
-    });
-  } else {
+  try {
+    const deleteUser = await UsersServices.getUserById(req.params.userId);
+    const resUser = await UsersServices.deleteUser(deleteUser?.id);
     res.json(resUser);
+  } catch (error) {
+    res.status(400).json({
+      message: (error as Error).message,
+    });
   }
 };
 
 const editUser = async (req: Request, res: Response) => {
-  const editUser = await UsersServices.getUserById(req.params.userId);
-  if (!editUser) {
-    res.status(400).json({
-      message: "User not found",
-    });
-    return;
-  }
-  const checkedUser = await UsersServices.getUserByEmail(req.body.email);
-
-  if (checkedUser) {
-    res.status(400).json({
-      message: "Email has existed",
-    });
-    return;
-  }
-  const resUser = await UsersServices.editUser(editUser.id, req.body);
-
-  if (!resUser) {
-    res.status(500).json({
-      message: "Something wrong",
-    });
-  } else {
+  try {
+    const editUser = await UsersServices.getUserById(req.params.userId);
+    const checkedUser = await UsersServices.getUserByEmail(req.body.email);
+    if (checkedUser) {
+      return res.status(400).json({
+        message: "Email has existed",
+      });
+    }
+    const resUser = await UsersServices.editUser(editUser?.id, req.body);
     res.json(resUser);
+  } catch (error) {
+    res.status(400).json({
+      message: (error as Error).message,
+    });
   }
 };
 

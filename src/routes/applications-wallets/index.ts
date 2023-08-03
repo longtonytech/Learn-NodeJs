@@ -2,6 +2,11 @@ import express from "express";
 import applicationWalletsControllers from "@/modules/applications-wallets/applications-wallets.controllers";
 
 import { verifyToken } from "@/middlewares/auth.middlewares";
+import { validateMiddleWare } from "@/middlewares/validation.middleware";
+import {
+  validateCreateApplicationWallet,
+  validateEditApplicationWallet,
+} from "@/modules/applications-wallets/applications-wallets.validation";
 
 const router = express.Router();
 
@@ -23,6 +28,7 @@ router.delete(
 router.put(
   "/:applicationWalletId",
   [verifyToken],
+  [validateMiddleWare(validateEditApplicationWallet)],
   applicationWalletsControllers.editApplicationWallet
 );
 router.get(
@@ -39,6 +45,7 @@ router.get(
 router.post(
   "/",
   [verifyToken],
+  [validateMiddleWare(validateCreateApplicationWallet)],
   applicationWalletsControllers.createApplicationWallet
 );
 

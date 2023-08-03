@@ -9,7 +9,7 @@ const validateCreateUser = (user: IUser) => {
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
       .required(),
     password: joi.string().required(),
-    phone: joi.string(),
+    phone: joi.string().length(10),
   });
   return schema.validate(user, { abortEarly: false });
 };
